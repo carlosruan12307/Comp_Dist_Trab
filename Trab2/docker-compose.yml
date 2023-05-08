@@ -8,8 +8,6 @@ services:
       MYSQL_USER: usr-wordpress
       MYSQL_PASSWORD: pwd-wordpress
       MYSQL_ROOT_PASSWORD: 123
-    ports:
-      - 3307:3306
     networks:
       - wordpress_network
   wordpress1:
@@ -23,8 +21,6 @@ services:
       WORDPRESS_DB_NAME: wordpress
     networks:
       - wordpress_network
-    ports:
-      - 8082:80
     volumes:
       - ./w1:/var/www/html
   wordpress2:
@@ -38,8 +34,6 @@ services:
       WORDPRESS_DB_NAME: wordpress
     networks:
       - wordpress_network
-    ports:
-      - 8083:80
     volumes:
       - ./w2:/var/www/html
   wordpress3:
@@ -53,12 +47,11 @@ services:
       WORDPRESS_DB_NAME: wordpress
     networks:
       - wordpress_network
-    ports:
-      - 8084:80
     volumes:
       - ./w1:/var/www/html
   nginx:
     image: nginx:latest
+
     restart: always
     ports:
       - 80:80

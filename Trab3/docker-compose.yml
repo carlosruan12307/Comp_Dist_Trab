@@ -1,0 +1,132 @@
+version: '3'
+services:
+  wordpress-db:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: usr-wordpress
+      MYSQL_PASSWORD: pwd-wordpress
+      MYSQL_ROOT_PASSWORD: 123
+    ports:
+      - 3307:3306
+    # networks:
+    #   network-example:
+    #     ipv4_address: 10.5.0.2
+    networks:
+      - wordpress_network
+  wordpress1:
+    depends_on:
+      - wordpress-db
+    image: wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db
+      WORDPRESS_DB_USER: usr-wordpress
+      WORDPRESS_DB_PASSWORD: pwd-wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_AUTH_KEY: 123
+    ports:
+      - 8086:80
+    # networks:
+    #   network-example:
+    #     ipv4_address: 10.5.0.3
+    volumes:
+      - ./w1:/var/www/html
+    networks:
+      - wordpress_network
+  # wordpress2:
+  #   depends_on:
+  #     - wordpress-db
+  #   image: wordpress:latest
+  #   environment:
+  #     WORDPRESS_DB_HOST: wordpress-db
+  #     WORDPRESS_DB_USER: usr-wordpress
+  #     WORDPRESS_DB_PASSWORD: pwd-wordpress
+  #     WORDPRESS_DB_NAME: wordpress
+  #     WORDPRESS_AUTH_KEY: 123
+  #   # networks:
+  #   #   network-example:
+  #   #     ipv4_address: 10.5.0.4
+  #   volumes:
+  #     - ./w2:/var/www/html
+
+  #   networks:
+  #     - wordpress_network
+  # wordpress3:
+  #   depends_on:
+  #     - wordpress-db
+  #   image: wordpress:latest
+  #   environment:
+  #     WORDPRESS_DB_HOST: wordpress-db
+  #     WORDPRESS_DB_USER: usr-wordpress
+  #     WORDPRESS_DB_PASSWORD: pwd-wordpress
+  #     WORDPRESS_DB_NAME: wordpress
+  #     WORDPRESS_AUTH_KEY: 123
+  #   # networks:
+  #   #   network-example:
+  #   #     ipv4_address: 10.5.0.5
+  #   volumes:
+  #     - ./w3:/var/www/html
+
+  #   networks:
+  #     - wordpress_network
+  nginx:
+    image: nginx:latest
+    restart: always
+    container_name: nginx
+    ports:
+      - 80:80
+    depends_on:
+      - wordpress1
+      # - wordpress2
+      # - wordpress3
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./w1:/usr/share/nginx/html/wordpress1
+      - ./w2:/usr/share/nginx/html/wordpress2
+      - ./w3:/usr/share/nginx/html/wordpress3
+    networks:
+      - wordpress_network
+    # networks:
+    #   network-example:
+    #     ipv4_address: 10.5.0.6
+
+  locust:
+    image: locustio/locust
+    depends_on:
+      - nginx
+    command: -f /mnt/locust/locustfile.py  --master
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./locust-task:/mnt/locust
+
+    environment:
+      LOCUST_HOST: http://10.5.0.6
+    networks:
+      - wordpress_network
+    # networks:
+    #   network-example:
+    #     ipv4_address: 10.5.0.7
+
+  worker:
+    image: locustio/locust
+    command: -f /mnt/locust/locustfile.py --worker --master-host=locust
+    volumes:
+      - ./locust-task:/mnt/locust
+    # networks:
+    #   network-example:
+    #     ipv4_address: 10.5.0.8
+    # networks:
+    #   network-example:
+    #     driver: bridge
+    #     ipam:
+    #       config:
+    #         - subnet: 10.5.0.0/16
+    #           gateway: 10.5.0.1
+    networks:
+      - wordpress_network
+
+networks:
+  wordpress_network:
+    driver: bridge
