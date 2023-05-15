@@ -34,42 +34,42 @@ services:
       - ./w1:/var/www/html
     networks:
       - wordpress_network
-  # wordpress2:
-  #   depends_on:
-  #     - wordpress-db
-  #   image: wordpress:latest
-  #   environment:
-  #     WORDPRESS_DB_HOST: wordpress-db
-  #     WORDPRESS_DB_USER: usr-wordpress
-  #     WORDPRESS_DB_PASSWORD: pwd-wordpress
-  #     WORDPRESS_DB_NAME: wordpress
-  #     WORDPRESS_AUTH_KEY: 123
-  #   # networks:
-  #   #   network-example:
-  #   #     ipv4_address: 10.5.0.4
-  #   volumes:
-  #     - ./w2:/var/www/html
+  wordpress2:
+    depends_on:
+      - wordpress-db
+    image: wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db
+      WORDPRESS_DB_USER: usr-wordpress
+      WORDPRESS_DB_PASSWORD: pwd-wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_AUTH_KEY: 123
+    # networks:
+    #   network-example:
+    #     ipv4_address: 10.5.0.4
+    volumes:
+      - ./w2:/var/www/html
 
-  #   networks:
-  #     - wordpress_network
-  # wordpress3:
-  #   depends_on:
-  #     - wordpress-db
-  #   image: wordpress:latest
-  #   environment:
-  #     WORDPRESS_DB_HOST: wordpress-db
-  #     WORDPRESS_DB_USER: usr-wordpress
-  #     WORDPRESS_DB_PASSWORD: pwd-wordpress
-  #     WORDPRESS_DB_NAME: wordpress
-  #     WORDPRESS_AUTH_KEY: 123
-  #   # networks:
-  #   #   network-example:
-  #   #     ipv4_address: 10.5.0.5
-  #   volumes:
-  #     - ./w3:/var/www/html
+    networks:
+      - wordpress_network
+  wordpress3:
+    depends_on:
+      - wordpress-db
+    image: wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db
+      WORDPRESS_DB_USER: usr-wordpress
+      WORDPRESS_DB_PASSWORD: pwd-wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_AUTH_KEY: 123
+    # networks:
+    #   network-example:
+    #     ipv4_address: 10.5.0.5
+    volumes:
+      - ./w3:/var/www/html
 
-  #   networks:
-  #     - wordpress_network
+    networks:
+      - wordpress_network
   nginx:
     image: nginx:latest
     restart: always
@@ -78,8 +78,8 @@ services:
       - 80:80
     depends_on:
       - wordpress1
-      # - wordpress2
-      # - wordpress3
+      - wordpress2
+      - wordpress3
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./w1:/usr/share/nginx/html/wordpress1
@@ -102,7 +102,7 @@ services:
       - ./locust-task:/mnt/locust
 
     environment:
-      LOCUST_HOST: http://10.5.0.6
+      - LOCUST_HOST=http://nginx:80
     networks:
       - wordpress_network
     # networks:

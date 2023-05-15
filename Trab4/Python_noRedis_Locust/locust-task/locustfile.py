@@ -15,22 +15,22 @@ class QuickstartUser(HttpUser):
         self.client.get("/?url=https://github.com/spring-projects/spring-boot")
     @task(4)
     def stackoauth2(self):
-        self.client.get("/?url=https://stackoverflow.com/questions/11485271/google-oauth-2-authorization-error-redirect-uri-mismatch")
+        self.client.get("/?url=https://github.com/topics/aws")
     @task(5)
     def chatgptlimit(self):
-        self.client.get("/?url=https://stackoverflow.com/questions/75586733/chatgpt-token-limit")
+        self.client.get("/?url=https://github.com/covid19india/covid19india-react")
     @task(6)
     def myrespository(self):
         self.client.get("/?url=https://github.com/carlosruan12307?tab=repositories")
     @task(7)
     def javastack(self):
-        self.client.get("/?url=https://stackoverflow.com/questions/tagged/java")
+        self.client.get("/?url=https://github.com/etcd-io/etcd")
     @task(8)
     def angularstack(self):
-        self.client.get("/?url=https://stackoverflow.com/questions/45031433/how-to-inject-a-service-in-an-exported-function")
+        self.client.get("/?url=https://github.com/twbs/bootstrap")
     @task(9)
     def reactstack(self):
-        self.client.get("/?url=https://stackoverflow.com/questions/31079081/programmatically-navigate-using-react-router")
+        self.client.get("/?url=https://github.com/macrozheng/mall")
     @task(10)
     def facebookreact(self):
         self.client.get("/?url=https://github.com/facebook/react-native")
